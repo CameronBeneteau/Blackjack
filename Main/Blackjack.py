@@ -3,8 +3,16 @@
 
 # In[5]:
 
-
 import random
+from pygame import * #import pygam module
+from time import time as tm #import real time module
+
+mixer.init() #initiate mixer (sound system)
+font.init() #initiate font
+
+width, height = 1200, 800 #width and height of the screen
+screen = display.set_mode((1200,800)) #setting the screen
+clock = time.Clock() #clock for frame rate
 
 suits = ('Hearts', 'Diamonds', 'Spades', 'Clubs')
 ranks = ('Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Jack', 'Queen', 'King', 'Ace')
@@ -298,7 +306,22 @@ def checking(player,dealer,chips):  # checks for different end possibilities
     else:
         push(player,dealer,chips)
 
+###############################################################################
+        
+def loadCardImages(suit):
+    cards = []
+    for i in range(1,14):
+        cards.append(image.load("CardImages/%d%s.png" % (i, suit)))
+        screen.blit(backgroundImage, (0,0))
+        screen.blit(cards[-1], (0, 0))
+        display.flip()
+        time.wait(100)
+    return cards
 
+###############################################################################
+#OTHER_IMAGES
+backgroundImage = image.load("Images/mainBackground.jpg").convert_alpha()
+###############################################################################
 # In[ ]:
 
 
@@ -306,9 +329,20 @@ print('\n \t \t \t \t \t \t WELCOME TO BLACKJACK! \nYou need the total value of 
 
 playerChips = Chips()
 
-while True:
-    
+running = True
+
+while running:
+    for e in event.get():
+        display.set_caption("BLACKJACK // FPS = {0:.0f}".format(clock.get_fps()))#create caption for game
+        if e.type == QUIT: #if quit
+            running = False #set running to false
+            
     playing = True
+
+    heartCards = loadCardImages("H")
+    diamondCards = loadCardImages("D")
+    clubCards = loadCardImages("C")
+    spadeCards = loadCardImages("S")
     
     deck = Deck()
     deck.shuffle()
@@ -329,6 +363,7 @@ while True:
 #    print(playerChips.bet)
     
     showSomeCards(dealerHand,playerHand)
+    
     
    
                              # ***************START IGNORING THIS PART*****************
@@ -375,6 +410,11 @@ while True:
     else:
         break
     
+    display.flip() #blit everything on the screen
+    clock.tick(60) #frame rate is 60
+    
+display.flip() #blit everything on the screen
+
 print('\n Thank you for playing Blackjack.')
 
 
